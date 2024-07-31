@@ -46,4 +46,4 @@ for tc in range(1, T+1):
             B_food_score += food_score[pair[0]][pair[1]] + food_score[pair[1]][pair[0]]
         min_diff = min(min_diff, abs(A_food_score - B_food_score))
 
-    # print(f'#{tc} {min_diff}')
+    print(f'#{tc} {min_diff}')

@@ -8,42 +8,37 @@ sys.stdin = open('4012_input.txt', 'r')
 
 T = int(input())
 
-for tc in range(1, T+1):
+for tc in range(1, T + 1):
     # 식재료 수 N
     N = int(input())
+
     food_score = [list(map(int, input().split())) for _ in range(N)]
+    food_idx = [i for i in range(N)]
+    min_diff = float('inf')
 
-    food_idx = [i for i in range(N)]    # 식재료 인덱스
-    min_diff = float('inf')     # 최소 차이값 저장
+    # N개 중 N//2개를 고른 조합 리스트
+    half = N // 2
+    comb_list = list(combinations(food_idx, half))
 
-    ingredients_num = N//2    # 각 음식에서 사용할 수 있는 식재료의 수
+    for comb in comb_list:
+        first_comb = list(comb)
+        second_comb = [idx for idx in food_idx if idx not in first_comb]
 
-    # 식재료 인덱스에서 사용할 수 있는 식재료 수만큼 선택하는 조합 생성
-    A_ingredients_group = list(combinations(food_idx, ingredients_num))
-    
-    for A_comb in A_ingredients_group:
-        # 튜플 형식 리스트로 변경
-        A_ingredients_group = list(A_comb)
-        # B 음식 사용 가능한 재료는 A 음식 재료 그룹에 속하지 않은 재료들
-        # 전체 재료 인덱스 중 A 음식 재료 그룹에 속하지 않은 인덱스만 리스트로 반환
-        B_ingredients_group = [ingredients_idx for ingredients_idx in food_idx if ingredients_idx not in A_ingredients_group]
+        first_food_score = 0
+        second_food_score = 0
 
-        # 음식 점수 계산용 변수
-        # 매 그룹별 점수 계산해야 하니까 for문 안에서 변수 초기화
-        A_food_score = 0
-        B_food_score = 0
+        # 첫 번째 음식 점수 계산
+        for i in range(half):
+            for j in range(i + 1, half):
+                first_food_score += food_score[first_comb[i]][first_comb[j]]
+                first_food_score += food_score[first_comb[j]][first_comb[i]]
 
-        # A 식재료 후보 중 2개 선택한 값을 리스트로 반환
-        a = [list(comb) for comb in combinations(A_ingredients_group, 2)]
-        b = [list(comb) for comb in combinations(B_ingredients_group, 2)]
+        # 두 번째 음식 점수 계산
+        for i in range(half):
+            for j in range(i + 1, half):
+                second_food_score += food_score[second_comb[i]][second_comb[j]]
+                second_food_score += food_score[second_comb[j]][second_comb[i]]
 
-        print(a)
+        min_diff = min(abs(first_food_score - second_food_score), min_diff)
 
-        # 점수 계산
-        for pair in a:
-            A_food_score += food_score[pair[0]][pair[1]] + food_score[pair[1]][pair[0]]
-        for pair in b:
-            B_food_score += food_score[pair[0]][pair[1]] + food_score[pair[1]][pair[0]]
-        min_diff = min(min_diff, abs(A_food_score - B_food_score))
-
-    # print(f'#{tc} {min_diff}')
+    print(f"#{tc} {min_diff}")
