@@ -37,10 +37,11 @@ def search(idx, honey_income, comb_sum, y, x):
     # 벌꿀 값도 더해서 넘김
     # y는 그대로 x인덱스는 1 증가해서 넘김
     # 두 번째 의문 // 지점 뭐가 다른겨 ......
-    # search(idx+1, honey_income+honey_board[y][x]**2,comb_sum+honey_board[y][x], y, x+1)
-    search(idx+1, honey_income+honey_board[y][x+idx]**2,comb_sum+honey_board[y][x+idx], y, x)
+    # 좌표를 옮겨주는 아래 코드(내 코드) 보다는 좌표는 변경하지 않는 선생님 방식이 더 좋대
+    search(idx+1, honey_income+honey_board[y][x]**2,comb_sum+honey_board[y][x], y, x+1)
+    # search(idx+1, honey_income+honey_board[y][x+idx]**2,comb_sum+honey_board[y][x+idx], y, x)
     # 해당 인덱스의 꿀통을 선택하지 않은 경우
-    search(idx+1, honey_income, comb_sum, y, x)
+    search(idx+1, honey_income, comb_sum, y, x+1)
 
     
 
@@ -73,7 +74,7 @@ for tc in range(1, T+1):
                     # 같은 라인일 때 b일꾼의 꿀통이 a일꾼보다 앞에 있는 경우
                     # 해당 좌표의 조합을 구할 필요가 없음(이미 a가 골라서 조합해봤기 때문)
                     if a_y == b_y and a_x + M > b_x : continue  # 이거 이해 안 감..? 또잉?
-                    # if a_y == b_y and a_x >= b_x + M : continue
+                    # if a_y == b_y and a_x >= b_x + M : continue   # 처리를 못 하는 케이스가 있음
                     comb_income = 0
                     search(0, 0, 0, b_y, b_x)
                     b_worker_max_income = comb_income
