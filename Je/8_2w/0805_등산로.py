@@ -37,12 +37,12 @@ def hiking_trail_bfs(hiking_map, N, K, start_x, start_y):
     visited = [[False] * N for _ in range(N)]
 
     # 시작 지점 초기값
-    queue = deque([(start_x, start_y, False, 1)])
+    queue = deque([(start_x, start_y, hiking_map[start_x][start_y], False, 1)])
     visited[start_x][start_y] = True
     max_length = 1
         
     while queue:
-        x, y, FLAG, length = queue.popleft()
+        x, y, curr_height, FLAG, length = queue.popleft()
         max_length = max(max_length, length)
         
         for dx, dy in dxy:
@@ -59,19 +59,19 @@ def hiking_trail_bfs(hiking_map, N, K, start_x, start_y):
             # 1. 이동할 지점이 더 낮은 경우 -> 그 지점으로 바로 이동
             if hiking_map[nx][ny] < hiking_map[x][y]:
                 visited[nx][ny] = True
-                queue.append((nx, ny, False, length+1))
+                queue.append((nx, ny, hiking_map[nx][ny], FLAG, length+1))
             
             # 2. 이동할 지점이 더 높거나 같은 경우(elif 조건문 사용)
             # K만큼 깎을 수 잇는 기회 1번 있음 
             # K를 썼는지 안썼는지 알기 위해 FLAG를 두자
             # -> 이전에 K만큼 지형 깎은 적 없으면 깎고 이동
-            # 2. 이동할 지점이 더 높거나 같은 경우
             elif not FLAG:
                 # 최소로 깎아 이동할 수 있는 경우
                 if hiking_map[nx][ny] - hiking_map[x][y] + 1 <= K:
                     visited[nx][ny] = True
-                    hiking_map[nx][ny] = hiking_map[x][y] - 1
-                    queue.append((nx, ny, True, length+1))
+                    # hiking_map[nx][ny] = hiking_map[x][y] - 1   # 일케 하면 배열 자체가 아예 바뀌어버림
+                    new_height = curr_height - 1  # 현재 지점보다 1 작으면 최소로 깎는거시다
+                    queue.append((nx, ny, new_height, True, length+1))
 
     return max_length
 
@@ -93,7 +93,7 @@ def main():
         
         result = max(root_length)
         print(f"#{test_case} {result}")
-        # 하 답이 몇 개는 맞고 몇 개는 틀림
+        # 여전히 답이 몇 개는 맞고 몇 개는 틀림
 
 
 if __name__ == "__main__":
