@@ -1,3 +1,9 @@
+'''
+문제링크: https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV14vXUqAGMCFAYD
+난이도: D4
+'''
+
+
 from collections import deque
 
 
@@ -38,6 +44,10 @@ def find_path_bfs(maze, start_point):
     return 0  # 도착 지점에 도달할 수 없을 경우
 
 
+def find_path_dfs():
+    pass
+
+
 def find_start_point(maze):
     for i in range(MATRIX_SIZE):
         for j in range(MATRIX_SIZE):
@@ -52,10 +62,13 @@ def main():
         maze = [list(map(int, input())) for _ in range(MATRIX_SIZE)]
         
         # 출발점 찾기: (i, j)가 2인 곳이 출발점
+        if not start_point:  # start_poitn가 None일 경우에 대한 예외처리
+            raise("시작 지점이 설정되지 않음") 
         start_point = find_start_point(maze)
 
         # 출발점부터 미로 탐색
         result = find_path_bfs(maze, start_point)
+        # result = find_path_dfs()
         
         print(f"#{test_case} {result}")
 
