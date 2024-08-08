@@ -1,5 +1,5 @@
 import sys
-sys.stdin = open("Je/8_2w/input.txt")
+# sys.stdin = open("8_2w\등산로_error_case.txt")
 
 
 '''
@@ -15,6 +15,7 @@ sys.stdin = open("Je/8_2w/input.txt")
 
 
 from collections import deque
+import copy
 
 
 def find_start_point(map, N):
@@ -34,44 +35,48 @@ def find_start_point(map, N):
 
 def hiking_trail_bfs(hiking_map, N, K, start_x, start_y):
     dxy = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    visited = [[False] * N for _ in range(N)]
 
-    # 시작 지점 초기값
-    queue = deque([(start_x, start_y, hiking_map[start_x][start_y], False, 1)])
-    visited[start_x][start_y] = True
+    # 시작 지점 초기값 설정
+    path_init = {(start_x, start_y)}
+    queue = deque([(start_x, start_y, path_init, hiking_map[start_x][start_y], False)])
+    # queue => (x좌표, y좌표, 지금까지 방문 경로, 현재 지점의 높이, 깎은 적이 있는지, 이동한 길이)
+
     max_length = 1
         
     while queue:
-        x, y, curr_height, FLAG, length = queue.popleft()
-        max_length = max(max_length, length)
+        # print(queue)
+        x, y, path, curr_height, FLAG = queue.popleft()
         
         for dx, dy in dxy:
             nx, ny = x + dx, y + dy
-            
+
             # 범위 벗어난 경우
             if nx < 0 or nx >= N or ny < 0 or ny >= N:
                 continue
             
             # 이미 방문한 경우
-            if visited[nx][ny]:
+            if (nx, ny) in path:
                 continue
             
             # 1. 이동할 지점이 더 낮은 경우 -> 그 지점으로 바로 이동
-            if hiking_map[nx][ny] < hiking_map[x][y]:
-                visited[nx][ny] = True
-                queue.append((nx, ny, hiking_map[nx][ny], FLAG, length+1))
+            if hiking_map[nx][ny] < curr_height:
+                new_path = copy.deepcopy(path)  # 집합은 리스트처럼 mutable -> deepcopy 해줘야함
+                new_path.add((nx, ny))
+                queue.append((nx, ny, new_path, hiking_map[nx][ny], FLAG))
             
             # 2. 이동할 지점이 더 높거나 같은 경우(elif 조건문 사용)
             # K만큼 깎을 수 잇는 기회 1번 있음 
             # K를 썼는지 안썼는지 알기 위해 FLAG를 두자
             # -> 이전에 K만큼 지형 깎은 적 없으면 깎고 이동
             elif not FLAG:
-                # 최소로 깎아 이동할 수 있는 경우
-                if hiking_map[nx][ny] - hiking_map[x][y] + 1 <= K:
-                    visited[nx][ny] = True
+                if hiking_map[nx][ny] - curr_height + 1 <= K:
+                    new_path = copy.deepcopy(path)
+                    new_path.add((nx, ny))
                     # hiking_map[nx][ny] = hiking_map[x][y] - 1   # 일케 하면 배열 자체가 아예 바뀌어버림
                     new_height = curr_height - 1  # 현재 지점보다 1 작으면 최소로 깎는거시다
-                    queue.append((nx, ny, new_height, True, length+1))
+                    queue.append((nx, ny, new_path, new_height, True))
+
+            max_length = max(max_length, len(new_path))
 
     return max_length
 
@@ -93,7 +98,6 @@ def main():
         
         result = max(root_length)
         print(f"#{test_case} {result}")
-        # 여전히 답이 몇 개는 맞고 몇 개는 틀림
 
 
 if __name__ == "__main__":
