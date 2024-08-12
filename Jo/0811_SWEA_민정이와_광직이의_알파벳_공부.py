@@ -1,29 +1,25 @@
-import sys
-sys.stdin = open("kwang_input.txt", "r")
+from itertools import combinations
+
+# import sys
+# sys.stdin = open("kwang_input.txt", "r")
 
 T = int(input())
 
-# 알파벳 26자
-# alphabet_set = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's','t','u','v','w', 'x', 'y', 'z'}
-
 for test_case in range(1, T + 1):
-    # 단어 수
+    #단어 수
     N = int(input())
-    word_list = [input() for _ in range(N)]
-    # 조합 수
-    comb_cnt = 0
+    #단어들
+    words = [input().strip() for _ in range(N)]
 
-    def dfs(words, idx):
-        global comb_cnt
-        if len(set(words)) == 26:
-            comb_cnt += 1
-            return
-        if idx == N:
-            return
+    answer = 0
 
-        dfs(words + word_list[idx], idx + 1)
-        dfs(words, idx + 1)
+    #각 조합을 문자열로 바꾸고 문자열을 집합으로 변환하여 길이를 연산. 26일 경우 1 추가
+    for i in range(1, N + 1):
+        word_combs = list(combinations(words, i))
+        for word_comb in word_combs:
+            words_to_str = "".join(word_comb)
+            letters_set = set(words_to_str)
+            if len(letters_set) == 26:
+                answer += 1
 
-    dfs('', 0)
-
-    print(f'#{test_case} {comb_cnt}')
+    print(f'#{test_case} {answer}')
