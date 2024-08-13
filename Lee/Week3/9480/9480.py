@@ -24,10 +24,11 @@ T = int(input())
 
 for test_case in range(1, T + 1):
     N = int(input())
-    words = [set(input()) for _ in range(N)]  # 단어를 set으로 변환하여 각 단어의 알파벳을 집합으로 저장
-    
-    print(words)
+    words = [input().strip() for _ in range(N)]  
+    words = [set(word) for word in words]
+
     max_count = 0
+
     dfs(0, set())  # 초기 호출 시 빈 set과 함께 시작
     
     print(f'#{test_case} {max_count}')
