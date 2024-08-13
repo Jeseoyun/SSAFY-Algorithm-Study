@@ -4,13 +4,11 @@ sys.stdin = open('sample_input.txt', 'r')
 def dfs(idx, selected_set):
     global max_count
     
-    # 26개의 알파벳을 모두 포함한 경우
-    if len(selected_set) == 26:
-        max_count += 1
-        return
-    
     # 주어진 단어를 모두 탐색한 경우 종료
     if idx == len(words):
+        # 26개의 알파벳을 모두 포함한 경우
+        if len(selected_set) == 26:
+            max_count += 1
         return
     
     # 현재 단어를 포함하는 경우
