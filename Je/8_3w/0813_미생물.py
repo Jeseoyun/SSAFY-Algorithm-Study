@@ -21,16 +21,17 @@ sys.stdin = open("Je/8_3w/input.txt")
 
 
 def find_opposite_direction(direction):
+    # 상: 1 하: 2 좌: 3 우: 4
     if direction % 2:
-        return direction - 1
-    else:
         return direction + 1
-    
+    else:
+        return direction - 1
+
 
 def move(pos, direction):
     dxy = {
-        1: (1, 0), 
-        2: (-1, 0), 
+        1: (-1, 0), 
+        2: (1, 0), 
         3: (0, -1), 
         4: (0, 1)
     }
@@ -49,40 +50,42 @@ def main():
 
         microbe = {}
         for _ in range(K):
-            x, y, m_num, direction = map(int, input().split())  # 세로 위치, 가로 위치, 미생물 수, 이동 방향
-            pos = (x, y)
+            *pos, m_num, direction = map(int, input().split())  # 세로 위치, 가로 위치, 미생물 수, 이동 방향
+            
+            pos = tuple(pos)  # 딕셔너리 키는 immutable 해야함
             if pos not in microbe.keys():
                 microbe[pos] = []
-            microbe[(x, y)].append([m_num, direction])
+            microbe[pos].append([m_num, direction])
         
         while M:
             print(microbe)
             new_microbe = {}
-            for (x, y) in microbe.keys():
+            for pos in microbe.keys():
                 # 두 개 이상 군집 모였을 경우
-                if len(microbe[(x, y)]) > 1:
+                if len(microbe[pos]) > 1:
                     m_sum, max_val, new_direction = 0, 0, 0
-                    for idx, val in enumerate(microbe[(x, y)]):
-                        m_sum += microbe[(x, y)][idx][0]
-                        if max_val < microbe[(x, y)][idx][0]:
-                            max_val = microbe[(x, y)][idx][0]
-                            new_direction = microbe[(x, y)][idx][1]
+                    for idx, val in enumerate(microbe[pos]):
+                        m_sum += microbe[pos][idx][0]
+                        if max_val < microbe[pos][idx][0]:
+                            max_val = microbe[pos][idx][0]
+                            new_direction = microbe[pos][idx][1]
 
-                    microbe[(x, y)] = [[m_sum, new_direction]]
+                    microbe[pos] = [[m_sum, new_direction]]
 
                 # 약품 셀일 경우
-                if x == 0 or x == K-1 or y == 0 or y == K-1:
-                    for idx, val in enumerate(microbe[(x, y)]):
-                        microbe[(x, y)][idx][0] = int(val[0] / 2)  # 미생물 절반 줄이기
-                        microbe[(x, y)][idx][1] = find_opposite_direction(microbe[(x, y)][idx][1])  # 이동방향 반대
+                if pos[0] == 0 or pos[0] == N-1 or pos[1] == 0 or pos[1] == N-1:
+                    print("약품처리", microbe[pos][idx][1], find_opposite_direction(microbe[pos][idx][1]))
+                    for idx, val in enumerate(microbe[pos]):
+                        microbe[pos][idx][0] = int(val[0] / 2)  # 미생물 절반 줄이기
+                        microbe[pos][idx][1] = find_opposite_direction(microbe[pos][idx][1])  # 이동방향 반대
 
                 # 미생물 이동
-                for idx, val in enumerate(microbe[(x, y)]):
-                    new_pos = move((x, y), microbe[(x, y)][idx][1])
-                    print((x, y), direction, new_pos, val)
+                for idx, val in enumerate(microbe[pos]):
+                    new_pos = move(pos, microbe[pos][idx][1])
+                    print(pos, new_pos, direction, val)
                     if new_pos not in new_microbe.keys():
                         new_microbe[new_pos] = []
-                    new_microbe[new_pos].append(microbe[(x, y)][idx])
+                    new_microbe[new_pos].append(microbe[pos][idx])
             
             microbe = new_microbe
                     
