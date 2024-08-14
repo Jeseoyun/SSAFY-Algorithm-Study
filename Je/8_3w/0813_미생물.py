@@ -58,10 +58,18 @@ def main():
             microbe[pos].append([m_num, direction])
         
         while M:
-            print(microbe)
+            # 1. 미생물 이동
             new_microbe = {}
             for pos in microbe.keys():
-                # 두 개 이상 군집 모였을 경우
+                for idx, val in enumerate(microbe[pos]):
+                    new_pos = move(pos, microbe[pos][idx][1])
+                    if new_pos not in new_microbe.keys():
+                        new_microbe[new_pos] = []
+                    new_microbe[new_pos].append(microbe[pos][idx])
+            microbe = new_microbe
+
+            for pos in microbe.keys():
+                # 2. 두 개 이상 군집 모였을 경우
                 if len(microbe[pos]) > 1:
                     m_sum, max_val, new_direction = 0, 0, 0
                     for idx, val in enumerate(microbe[pos]):
@@ -72,22 +80,11 @@ def main():
 
                     microbe[pos] = [[m_sum, new_direction]]
 
-                # 약품 셀일 경우
+                # 3. 약품 셀일 경우
                 if pos[0] == 0 or pos[0] == N-1 or pos[1] == 0 or pos[1] == N-1:
-                    print("약품처리", microbe[pos][idx][1], find_opposite_direction(microbe[pos][idx][1]))
                     for idx, val in enumerate(microbe[pos]):
                         microbe[pos][idx][0] = int(val[0] / 2)  # 미생물 절반 줄이기
                         microbe[pos][idx][1] = find_opposite_direction(microbe[pos][idx][1])  # 이동방향 반대
-
-                # 미생물 이동
-                for idx, val in enumerate(microbe[pos]):
-                    new_pos = move(pos, microbe[pos][idx][1])
-                    print(pos, new_pos, direction, val)
-                    if new_pos not in new_microbe.keys():
-                        new_microbe[new_pos] = []
-                    new_microbe[new_pos].append(microbe[pos][idx])
-            
-            microbe = new_microbe
                     
             M -= 1  # 시간 감소
 
@@ -97,7 +94,7 @@ def main():
                 m_sum += m_li[0]
 
         print(f"#{test_case} {m_sum}")
-        break
+
 
 if __name__ == "__main__":
     main()
