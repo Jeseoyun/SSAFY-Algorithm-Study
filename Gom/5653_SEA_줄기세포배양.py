@@ -41,32 +41,53 @@ N,M,K=map(int,input().split())
 arr=[list(map(int,input().split())) for _ in range(N)]
 
 hq=[]
-cell_lst=[]  # 세포 좌표
+grid_lst=[]  # 세포 좌표
 
 # 세포 있는 곳
 for i in range(N):
     for j in range(M):
         if arr[i][j]!=0:
-            val=-arr[i][j] 
-            time_val=-val # 남은 시간
-            cell_lst.append((i,j))
-            heapq.heappush(hq,(-val,time_val,(i,j)))
+            val=arr[i][j] 
+            time_val=val # 남은 시간
+            grid=(i,j)
+            grid_lst.append(grid)
+            heapq.heappush(hq,(-val,time_val,grid))
 
-# # 배양 part
-# for _ in range(K):
-#     sub_hq=[]
+print('initial hq',hq)
+dij=[(-1,0),(1,0),(0,-1),(0,1)]
+
+for _ in range(K):
+    sub_hq=[]
+    while hq:
+        
+        val,time_val,grid=heapq.heappop(hq)  # 현재까지 val 음수
+        
+        if time_val!=0:
+            time_val-=1
+            heapq.heappush(sub_hq,(val,time_val-1,grid))
 
 
-while hq:
-    val,time_val,grid=heapq.heappop(hq)
-    print(val,time_val,grid)
+        else:
+            i,j=grid
+            for di,dj in dij:
+                ni,nj=i+di,j+dj
+                new_grid=(ni,nj)
+                if new_grid not in grid_lst:
+                    heapq.heappush(sub_hq,(val,-val,new_grid))
+                    grid_lst.append(new_grid)
 
+        print('##',grid)
+        print('##',hq)
+    
+    hq=sub_hq
+    print(_+1)
+    print('gird_lst',grid_lst)
+    print('hq',hq)
 
-// 일단 출력 okay
-
-// time out 세포 처리, 인접 조건 확인 후 hq 담기 구현 
-
-// 정답 처리
+ans=0
+for i in range(len(hq)):
+    ans+=hq[i][0]
+    print('#########',-ans)
 
 
 
