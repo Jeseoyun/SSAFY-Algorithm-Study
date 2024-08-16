@@ -62,7 +62,7 @@ def main():
             pos = tuple(pos)  # 딕셔너리 키는 immutable 해야함
             if pos not in microbe.keys():
                 microbe[pos] = []
-            microbe[pos].append([m_num, direction])  # {(좌표) : [미생물 수, 이동 방향], ...}
+            microbe[pos].append([m_num, direction])  # {(좌표) : [[미생물 수, 이동 방향], ... ]}
         
         while M:
             # 1. 미생물 이동
