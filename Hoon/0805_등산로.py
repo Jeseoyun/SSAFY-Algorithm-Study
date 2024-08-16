@@ -31,8 +31,8 @@ def DFS(board, y, x, can_cut_height, cur_height, length, size, visited):
         if board[ny][nx] < cur_height:
             #디버깅
             visited[ny][nx] = 1
-            #print_board(visited)
-            #print()
+            print_board(visited)
+            print()
             DFS(board, ny, nx, can_cut_height, board[ny][nx], length+1, size, visited)
             visited[ny][nx] = 0
             
@@ -45,8 +45,8 @@ def DFS(board, y, x, can_cut_height, cur_height, length, size, visited):
                 #최선으로 자르는건 현재 높이에서 -1로 만드는게 최선
                 #디버깅
                 visited[ny][nx] = 1
-                # print_board(visited)
-                # print()
+                print_board(visited)
+                print()
                 DFS(board, ny, nx, -1, cur_height - 1, length+1, size, visited)
                 visited[ny][nx] = 0
 
@@ -78,11 +78,11 @@ def main():
         for start_y, start_x in start_idx:
             visited = [[0]*num for _ in range(num)]
             
-            #print(start_y, start_x, "에서 출발하는 경우")
+            print(start_y, start_x, "에서 출발하는 경우")
             #디버깅
             visited[start_y][start_x] = 1
-            #print_board(visited)
-            #print()
+            print_board(visited)
+            print()
 
             DFS(board, start_y, start_x, height, board[start_y][start_x], 1, num, visited)
             visited[start_y][start_x] = 0
