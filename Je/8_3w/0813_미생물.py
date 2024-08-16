@@ -4,28 +4,27 @@ sys.stdin = open("Je/8_3w/input.txt")
 
 '''
 문제 링크: https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV597vbqAH0DFAVl
+
+원자 소멸 시뮬레이션이랑 비슷한듯
+
+1. 먼저 미생물을 이동방향으로 이동시킴
+
+2. 만약 이동 후 약품 셀에 도착했을 경우
+- 미생물 절반으로 줄이고 이동방향 반대로 바꿈
+- 절반 줄일 때 소숫점 이하 버림
+
+3. 만약 이동 후 두 개 이상의 군집이 모였을 경우
+- 해당 지점의 미생물 모두 합침
+- 이동 방향은 미생물 가장 많았던 놈의 이동방향 가져옴
 '''
-
-
-# 원자 소멸 시뮬레이션이랑 비슷한듯
-
-# 1. 먼저 미생물을 이동방향으로 이동시킴
-
-# 2. 만약 이동 후 약품 셀에 도착했을 경우
-# - 미생물 절반으로 줄이고 이동방향 반대로 바꿈
-# - 절반 줄일 때 소숫점 이하 버림
-
-# 3. 만약 이동 후 두 개 이상의 군집이 모였을 경우
-# - 해당 지점의 미생물 모두 합침
-# - 이동 방향은 미생물 가장 많았던 놈의 이동방향 가져옴
 
 
 def find_opposite_direction(direction):
     # 상: 1 하: 2 좌: 3 우: 4
     if direction % 2:
-        return direction + 1
+        return direction + 1  # 홀수이면 1 더해주고
     else:
-        return direction - 1
+        return direction - 1  # 짝수이면 1 빼주면 방향이 바뀐다
 
 
 def move(pos, direction):
@@ -42,6 +41,14 @@ def move(pos, direction):
     return (nx, ny)
 
 
+def calculate_remainings(microbe):
+    m_sum = 0
+    for pos in microbe.keys():
+        for m_li in microbe[pos]:
+            m_sum += m_li[0]
+    return m_sum
+
+
 def main():
     T = int(input())
 
@@ -55,14 +62,14 @@ def main():
             pos = tuple(pos)  # 딕셔너리 키는 immutable 해야함
             if pos not in microbe.keys():
                 microbe[pos] = []
-            microbe[pos].append([m_num, direction])
+            microbe[pos].append([m_num, direction])  # {(좌표) : [미생물 수, 이동 방향], ...}
         
         while M:
             # 1. 미생물 이동
             new_microbe = {}
             for pos in microbe.keys():
                 for idx, val in enumerate(microbe[pos]):
-                    new_pos = move(pos, microbe[pos][idx][1])
+                    new_pos = move(pos, val[1])
                     if new_pos not in new_microbe.keys():
                         new_microbe[new_pos] = []
                     new_microbe[new_pos].append(microbe[pos][idx])
@@ -71,12 +78,12 @@ def main():
             for pos in microbe.keys():
                 # 2. 두 개 이상 군집 모였을 경우
                 if len(microbe[pos]) > 1:
-                    m_sum, max_val, new_direction = 0, 0, 0
+                    m_sum, max_val, new_direction = 0, 0, 0  # 미생물 수의 합, 가장 많은 미생물이 몇 개 였는지, 그 때의 방향은 어디쪽이었는지
                     for idx, val in enumerate(microbe[pos]):
-                        m_sum += microbe[pos][idx][0]
-                        if max_val < microbe[pos][idx][0]:
-                            max_val = microbe[pos][idx][0]
-                            new_direction = microbe[pos][idx][1]
+                        m_sum += val[0]
+                        if max_val < val[0]:
+                            max_val = val[0]
+                            new_direction = val[1]
 
                     microbe[pos] = [[m_sum, new_direction]]
 
@@ -84,16 +91,13 @@ def main():
                 if pos[0] == 0 or pos[0] == N-1 or pos[1] == 0 or pos[1] == N-1:
                     for idx, val in enumerate(microbe[pos]):
                         microbe[pos][idx][0] = int(val[0] / 2)  # 미생물 절반 줄이기
-                        microbe[pos][idx][1] = find_opposite_direction(microbe[pos][idx][1])  # 이동방향 반대
+                        microbe[pos][idx][1] = find_opposite_direction(val[1])  # 이동방향 반대
                     
             M -= 1  # 시간 감소
 
-        m_sum = 0
-        for key in microbe.keys():
-            for m_li in microbe[key]:
-                m_sum += m_li[0]
+        result = calculate_remainings(microbe)
 
-        print(f"#{test_case} {m_sum}")
+        print(f"#{test_case} {result}")
 
 
 if __name__ == "__main__":
