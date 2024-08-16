@@ -56,9 +56,60 @@ for i in range(N):
         if arr[i][j]!=0:
             val=arr[i][j] 
             time_val=val # 남은 시간
+<<<<<<< HEAD
+            grid=(i,j)
+            grid_lst.append(grid)
+            heapq.heappush(hq,(-val,time_val,grid))
+
+print('initial hq',hq)
+dij=[(-1,0),(1,0),(0,-1),(0,1)]
+
+for _ in range(K):
+    sub_hq=[]
+    while hq:
+        
+        val,time_val,grid=heapq.heappop(hq)  # 현재까지 val 음수
+        
+        if time_val!=0:
+            time_val-=1
+            heapq.heappush(sub_hq,(val,time_val-1,grid))
+
+
+        else:
+            i,j=grid
+            for di,dj in dij:
+                ni,nj=i+di,j+dj
+                new_grid=(ni,nj)
+                if new_grid not in grid_lst:
+                    heapq.heappush(sub_hq,(val,-val,new_grid))
+                    grid_lst.append(new_grid)
+
+        print('##',grid)
+        print('##',hq)
+    
+    hq=sub_hq
+    print(_+1)
+    print('gird_lst',grid_lst)
+    print('hq',hq)
+
+ans=0
+for i in range(len(hq)):
+    ans+=hq[i][0]
+    print('#########',-ans)
+
+
+
+
+
+
+
+
+
+=======
             left_time=val # 남은 시간이 0일 때, 활성화 되는 시간
             grid=(i,j)
             grid_lst.append(grid)
+>>>>>>> 30ddc79f9e7388151ea47c55c7fdc25b0afe745d
 
             heapq.heappush(hq,(-val,time_val,left_time,grid))
 
