@@ -53,10 +53,10 @@ def main():
                 save_arr[y][x] = max_sum
 
         #디버깅
-        # for li in save_arr:
-        #     for elem in li:
-        #         print(elem, end=" ")
-        #     print()
+        for li in save_arr:
+            for elem in li:
+                print(elem, end=" ")
+            print()
 
         #4중 for문시 100 * 100 이하의 테스트 케이스
         def find_second(first_y, first_x, num, size_x):
