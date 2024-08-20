@@ -7,6 +7,7 @@ def dfs(idx,sub_word):
     dfs(idx+1,sub_word+arr[idx])
     dfs(idx+1,sub_word)
 
+
 # main
 T=int(input())
 for tc in range(1,T+1):
