@@ -19,77 +19,60 @@ sys.stdin = open("Je\8_4w\input.txt")
 '''
 
 
-dxy = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+dxy = [(-1, -1), (1, -1), (-1, 1), (1, 1)]
 max_dessert = -1
-prev = ()
 
 
 def log(matrix):
-    for i in matrix:
-        for j in i:
-            print(j, end=" ")
+    for lst in matrix:
+        for elem in lst:
+            print(elem, end=' ')
         print()
-    print("max_dessert", max_dessert)
+    print(f"max dessert:", max_dessert)
     print()
 
 
-def dfs(arr, matrix_size, start, x, y, visited, used_direction, history):
-    global max_dessert, prev
+def dfs(matrix, n, start, x, y, i, visited, history):
+    global max_dessert
+    
+    visited[x][y] = 1
+    history.append(matrix[x][y])
+    
+    print(f"현좌표: {(x, y)}, history: {history}, i: {i}")
     log(visited)
     
-    # 1. 원래 가던 방향대로
-    if prev:
-        nx, ny = x + prev[0], y + prev[1]
-        print((x, y),"->",(nx, ny))
-    
-    # 2. 새로운 방향으로
-    for dx, dy in dxy:
+    for dir_idx in range(i, i+1):
+        dx, dy = dxy[dir_idx]
         nx, ny = x + dx, y + dy
-        print((x, y),"->",(nx, ny))
         
-        # 배열 크기 벗어난 경우
-        if nx < 0 or nx >= matrix_size or ny < 0 or ny >= matrix_size:
+        # 도착 지점 도달
+        if start == (nx, ny) and len(history) >= 4:
+            max_dessert = max(max_dessert, sum(history))
+            print("도챠쿠")
+            return
+        
+        # 배열 범위 벗어난 경우
+        if nx < 0 or nx >= n or ny < 0 or ny >= n:
             continue
         
         # 이미 방문한 경우
         if visited[nx][ny]:
             continue
         
-        # 이전에 먹은 디저트 개수와 같을 경우
-        if arr[nx][ny] in history:
-            continue
-        
-        # 이전 방향은 사용 불가
-        if prev and (dx, dy) not in used_direction:
-            continue
-        
-        # 탈출 조건: 시작 지점에 다시 도착한 경우
-        if (nx, ny) == start:
-            max_dessert = max(max_dessert, visited[x][y] + arr[nx][ny])
-            return
-        
-        visited[nx][ny] = visited[x][y] + arr[nx][ny]
-        used_direction.append((dx, dy))
-        history.add(arr[nx][ny])
-        
-        dfs(arr, matrix_size, start, nx, ny, visited, used_direction)
-        
-
-
-def cafe_tour(cafes, matrix_size):
-    global max_dessert
-    max_dessert = -1
+        dfs(matrix, n, start, nx, ny, i+1, visited, history)
     
-    # 모든 점이 출발점이 될 수 있다
-    for i in range(matrix_size):
-        for j in range(matrix_size):
+    visited[x][y] = 0
+    history.pop()
+
+
+def cafe_tour(cafes, size):
+    for i in range(size):
+        for j in range(size):
             start = (i, j)
-            print(f"=========== start: {start} ===========")
-            visited = [[0]*matrix_size for _ in range(matrix_size)]
-            visited[i][j] += cafes[i][j]  # 초기값
-            used_direction = []
-            history = set()
-            dfs(cafes, matrix_size, start, i, j, visited, used_direction, history)
+            print("시작점", start)
+            visited = [[0]*size for _ in range(size)]
+            history = []
+            dfs(cafes, size, start, i, j, 0, visited, history)
     return
 
 
@@ -99,7 +82,7 @@ def main():
     for test_case in range(1, T+1):
         N = int(input())
         cafes = [list(map(int, input().split())) for _ in range(N)]
-        
+        print(cafes)
         cafe_tour(cafes, N)
         
         print(f"#{test_case} {max_dessert}")
