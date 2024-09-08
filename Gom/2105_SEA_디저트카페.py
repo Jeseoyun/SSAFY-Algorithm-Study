@@ -211,12 +211,21 @@ def dfs(ci,cj,bent,v):
     ni,nj=ci+dij[bent][0],cj+dij[bent][1]
 
     if 0<=ni<N and 0<=nj<N:
-        #print(lst[ni][nj],v)
+        print(lst[ni][nj],v)
         # ? 뭐지 lst[ni][nj]하면 v 원소 접근이 안됨. [lst[ni][nj]] 해야하는데 ?
         # 수정1 -> ? 더 느려지는데?
-        #if [lst[ni][nj]] not in v:
-        dfs(ni,nj,bent+1,v+[lst[ci][cj]])  # 방향 꺽음
-        dfs(ni,nj,bent,v+[lst[ci][cj]])  # 킵 고잉
+        if [lst[ni][nj]] not in v:
+            
+            print('v 입니다', v)
+            dfs(ni,nj,bent+1,v+[lst[ci][cj]])  # 방향 꺽음
+            dfs(ni,nj,bent,v+[lst[ci][cj]])  # 킵 고잉
+        else:
+            print('가지치기 했음 , ')
+
+# 나 이해 못함
+# ?? 
+# ?? 
+# 겉멋 좋았다 
 
 
 # main
