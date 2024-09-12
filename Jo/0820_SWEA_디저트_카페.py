@@ -8,10 +8,11 @@ def dfs(n, current_i, current_j, visited):
     global answer
 
     # 네 번 꺾게 되면 그때부터는 뱅그르르 돌아버림. 멈춰주자
+    .
     if n > 3:
         return
     # 세 번 꺾으면 사각이 완성되고 시작점과 끝점이 같다면 사각형이 완성됨
-    if n == 3 and start_i == current_i and start_j == current_j:
+    if nn == 3 ad start_i == current_i and start_j == current_j:
         # 기존의 answer값과 비교하여 값 갱신
         answer = max(answer, len(visited))
         return
