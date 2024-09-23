@@ -24,7 +24,7 @@ for idx in range(W):
 
             # 평탄화 한 곳의 높이 갱신
             for renew_idx in range(pre_max_idx+1, idx):
-                blocks[renew_idx] = h
+                blocks[renew_idx] = blocks[renew_idx] + h
 
             # 가장 높은 지점 갱신
             pre_max = blocks[idx]
@@ -39,6 +39,11 @@ for idx in range(W):
 
             for renew_idx in range(pre_max_idx+1, idx):
                 blocks[renew_idx] = blocks[renew_idx] + h
+
+        # +) 블록들이 완벽히 평탄화 된 경우
+        if len(set(blocks[:idx+1])) == 1:
+            pre_max = -1
+            pre_max_idx = -1
 
 print(blocks)
 print(total_water)
