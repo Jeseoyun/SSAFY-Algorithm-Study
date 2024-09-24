@@ -29,7 +29,7 @@ for j in range(len(lst[0])):  # 열
 
 # 카운트 함수
 for i in range(len(lst)):
-    flg=False 
+    flg=False q
     sub_cnt=0
     for j in range(len(lst[0])):
         # 벽일 때
