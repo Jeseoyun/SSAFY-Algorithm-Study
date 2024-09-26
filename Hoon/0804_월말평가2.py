@@ -24,11 +24,12 @@ def BFS(board, start_y, start_x, end_y, end_x, size_y, size_x):
     while queue:
         y, x, cur_dist, cur_dir = queue.popleft()
         
-        #목표 도착시 탈출
-        if y == end_y and x == end_x:
-            is_arrived = 1
-            dist = cur_dist
-            break 
+        # 탈출 코드 위치가 틀렸다.
+        # #목표 도착시 탈출
+        # if y == end_y and x == end_x:
+        #     is_arrived = 1
+        #     dist = cur_dist
+        #     break 
 
         #이전 방향으로 계속 가는지 판단
         ny = y + dy[cur_dir]
@@ -37,6 +38,12 @@ def BFS(board, start_y, start_x, end_y, end_x, size_y, size_x):
         #다음 좌표가 벽인 경우 == 부딪힘
         #방문 처리를 벽에 만나는 경우에만 해준다.
         if ny < 0 or nx < 0 or ny >= size_y or nx >= size_x or board[ny][nx] == 1:
+            #목표 도착시 탈출
+            if y == end_y and x == end_x:
+                is_arrived = 1
+                dist = cur_dist
+                break 
+            
             if visited[y][x] == 1:#이전에 멈췄던 곳이면.
                 continue
             else:

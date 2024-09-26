@@ -1,6 +1,3 @@
-# import sys
-# sys.stdin = open("algo1_sample_in.txt")
-
 import json
 
 
@@ -17,13 +14,18 @@ def restore_campus(costs, calculated_cost, depth=1):
             restore_campus(cost, calculated_cost, depth+1)
 
 
-T = int(input())
+def main():
+    T = int(input())
 
-for test_case in range(1, T+1):
-    N = int(input())  # 유지보수 비용의 요소 수
-    costs = json.loads(input().strip())  # 유지보수 비용 리스트
+    for test_case in range(1, T+1):
+        N = int(input())  # 유지보수 비용의 요소 수
+        costs = json.loads(input().strip())  # 유지보수 비용 리스트
 
-    calculated_cost = []  # 유지보수 비용을 계산하여 저장
-    restore_campus(costs, calculated_cost)
+        calculated_cost = []  # 유지보수 비용을 계산하여 저장
+        restore_campus(costs, calculated_cost)
 
-    print(f"#{test_case} {sum(calculated_cost)}")
+        print(f"#{test_case} {sum(calculated_cost)}")
+
+
+if __name__ == "__main__":
+    main()
