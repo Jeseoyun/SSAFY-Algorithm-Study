@@ -107,6 +107,9 @@ while True:
 '''
 
 
+# 실패 코드
+
+'''
 N,M,B=map(int,input().split())
 ans_S=0
 ans_H=0
@@ -130,7 +133,7 @@ for i in range(len(flattened_list)):
     if flattened_list[i] in check_num:
         continue
     else:
-        sub_S=0
+        sub_S=1e9
         sub_H=0
 
         cur_H=flattened_list[i]
@@ -163,3 +166,84 @@ print(ans_S,ans_H)
 
 # 전부 0 출력 된다 GOOD 
 # BREAK TIME ,, 
+
+'''
+
+
+#####################
+#####################
+
+# 마크 풀이
+
+'''
+- 구현 PBL
+
+- 높이 정보만 유지하고 있으면 되므로 2차원(ground) 1차원(flattened_ground)을 변환해줌 -> only 가독성
+
+- 타겟 높이가 될 수 있는 범위 =  min(flattened_ground) ~ max(flattened_ground)
+
+  >> flattened_ground 각각의 높이를 순회하면서 타겟 높이로 잡고, 최소의 시간이 나오는 높이를 정답으로 정하자  (타겟 높이: 평탄화로 만들고자 하는 높이)
+  
+  >> 타겟으로 잡은 높이를 만들지 못하는 경우가 존재함
+
+    - 인벤토리 초기 블록 개수(B) + 타겟보다 높아서 깍은 개수(remove_blocks)  - 타겟보다 낮아서 올린 개수(add_blocks) < 0 : 블록이 모자라기 때문에 만들 수 없음 
+
+    - 위의 조건에 걸러지지 않는다면, 현재 저장된 최소 시간과 비교해보고 짧다면 높이, 시간 갱신
+
+
+[어려웠던 점]
+
+- 타겟으로 1차적으로 리스트를 순회하는데, 다른 높이들과 비교하는 과정에서 시간 복잡도가 높아짐 
+
+- Counter 모듈 사용 
+  >> 리스트 원소의 개수를 딕셔너리 형태로 반환해 줌
+  >> 중복된 원소들을 순회하지 않고, 딕셔너리 하나만 순회하면 됨
+
+'''
+
+from collections import Counter
+
+N, M, B = map(int, input().split())
+ground = [list(map(int, input().split())) for _ in range(N)]  
+
+# 땅의 높이를 평탄화(2차원 -> 1차원)해서 리스트로 변환한 후, 높이별 개수를 셈
+flattened_ground = [block for row in ground for block in row]
+height_count = Counter(flattened_ground)
+
+# 가장 높은 높이, 가장 낮은 높이
+min_height = min(flattened_ground)
+max_height = max(flattened_ground)
+
+# 최소 시간 무한으로 갱신, 높이 0 초기화
+min_time = float('inf')
+best_height = 0
+
+
+# 타겟 높이 순회 : 최소 높이 ~ 최대 높이
+for target_height in range(min_height, max_height + 1):
+    remove_blocks = 0  # 타겟 보다 높았을 때 제거할 블록
+    add_blocks = 0  # 타겟 보다 낮았을 때 올릴 블록
+    
+    # 높이별 개수를 딕셔너리에 담아놓았기 때문에 바로 차이 계산
+    for height, count in height_count.items():
+        # 타겟 보다 높이가 큰 블록들 >> 깍아줌, 깍아준 만큼 remove_blocks에 추가
+        if height > target_height:
+            remove_blocks += (height - target_height) * count
+        
+        # 타겟 보다 낮은 블록들 >> 더해줌, 더해준 만큼 add_block에 추가
+        else:
+            add_blocks += (target_height - height) * count
+
+    # 블록 개수 조건을 따져 만들 수 있다면
+    # 개수 조건 ) B + removed_blocks < add_blocks  : 기본 블록 + 깍아서 쟁긴 블록 < 추가해야 하는 블록   
+    if remove_blocks + B >= add_blocks:
+        time = remove_blocks * 2 + add_blocks  # 깍는데 걸리는 시간 2초, 올리는데 걸리는 시간 1초
+
+        # 갱신 조건
+        # 1. 시간이 더 작게 걸림 -> 무조건 갱신
+        # 2. 시간은 같은데, 높이가 더 큰 경우(문제 명시)
+        if time < min_time or (time == min_time and target_height > best_height):
+            min_time = time
+            best_height = target_height
+
+print(min_time, best_height)
