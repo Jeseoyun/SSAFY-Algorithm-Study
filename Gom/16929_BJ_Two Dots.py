@@ -2,19 +2,18 @@
 '''
 풀이법 
 
-
 - 모든 좌표 순회
 
-- 각각의 좌표에서 DFS 수행 : 종료조건 == 시작좌표
+- 각각의 좌표에서 DFS 수행 : 종료조건 == 시작좌표, dist>=3(최소 사이클 형성 길이)
 
-- 방문 처리 O
+- 방문 처리 O -> 방문처리된 좌표들에 대해서는 검사할 필요 x
+
+- 디버깅 어캐 함 ???
 
 '''
 
-
-# 디버깅 어캐 함 ???
-
-
+# MemoryError: Stack overflow
+# 뭐가 문젠데 ? ,, ? ,, ? 메모리 일 안함 ? 
 
 import sys
 sys.setrecursionlimit(10**7)
@@ -40,7 +39,6 @@ def dfs(i,j,target_x,target_y,dist):
                 if (visited[ni][nj]==True and dist>=3) or (visited[ni][nj]==False):  # 2, 3
                     visited[ni][nj]=True # 방문처리
                     dfs(ni,nj,target_x,target_y,dist+1)
-                    visited[ni][nj]=False # 방문해제 
 
 
 # Main 
@@ -49,17 +47,15 @@ lst=[list(input()) for _ in range(N)]
 visited=[[False for _ in range(M)] for _ in range(N)]
 ans=False
 
-word_check=[] # 검사한 단어 저장 리스트
 
 
 for i in range(len(lst)):
     for j in range(len(lst[0])):
-        if lst[i][j] not in word_check:
-            word_check.append(lst[i][j])
-            si,sj=i,j  # 시작 좌표 저장
-            visited[i][j]=True
-            dfs(i,j,si,sj,0)
-            visited[i][j]=False
+        print(i,j)
+        si,sj=i,j  # 시작 좌표 저장
+        visited[i][j]=True
+        dfs(i,j,si,sj,0)
+        # visited[i][j]=False
 
 print(ans)
 print('이건 찍히겠찌?')
