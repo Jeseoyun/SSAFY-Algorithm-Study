@@ -14,6 +14,9 @@
 
 # MemoryError: Stack overflow
 # 뭐가 문젠데 ? ,, ? ,, ? 메모리 일 안함 ? 
+# 3가지의 이유가 있었다.
+
+
 
 import sys
 sys.setrecursionlimit(10**7)
@@ -21,6 +24,10 @@ sys.setrecursionlimit(10**7)
 # DFS
 def dfs(i,j,target_x,target_y,dist):
     global ans 
+
+    # 이유3 : 사기 코드
+    if ans:
+        return 
 
     if i==target_x and j==target_y and dist>=3: # 시작점과 동일하고, 거리가 3이상이라면 
         ans=True
@@ -36,9 +43,13 @@ def dfs(i,j,target_x,target_y,dist):
         
         if 0<=ni<N and 0<=nj<M: # 범위 조건 만족 
             if lst[ni][nj]==lst[target_x][target_y]: # 1
-                if (visited[ni][nj]==True and dist>=3) or (visited[ni][nj]==False):  # 2, 3
+
+                # 이유1: 인덱스 조건을 포함 안시켜주면, 방문처리된 3이상 이동거리 좌표 전부 방문 -> 메모라 초과
+                # 이유2(오답으로 이어짐, 시간초과 X): 방문 해제를 안해주면, 시작점이 다른 경우에 대한 처리가 안됨 testcase3
+                if (visited[ni][nj]==True and dist>=3 and ni==target_x and nj==target_y) or (visited[ni][nj]==False):  # 2, 3
                     visited[ni][nj]=True # 방문처리
                     dfs(ni,nj,target_x,target_y,dist+1)
+                    visited[ni][nj]=False
 
 
 # Main 
@@ -48,14 +59,19 @@ visited=[[False for _ in range(M)] for _ in range(N)]
 ans=False
 
 
-
 for i in range(len(lst)):
     for j in range(len(lst[0])):
-        print(i,j)
         si,sj=i,j  # 시작 좌표 저장
         visited[i][j]=True
         dfs(i,j,si,sj,0)
-        # visited[i][j]=False
+        visited[i][j]=False
 
-print(ans)
-print('이건 찍히겠찌?')
+print("Yes" if ans else "No")
+
+
+
+# 분류, 회귀 차이
+# 로지스틱 회귀 - 장단점
+# 앙상블 용어 중요
+# train_test_split(x,y,test_size,random_state) 메서드 중요
+# scikit-learn example _ regression 개론, 코드 이해하기 
