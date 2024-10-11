@@ -18,7 +18,11 @@
 # 고슴도치가 한 번 이동할 때마다 map 모양 바꿔줘야 함
 
 # troubleshooting
-# 1분마다 물이 퍼져나가야하는데 큐를 기준으로 돌려버리니까 1분마다 map이 바뀌는걸 구현하는게 어렵다
+# 1분마다 물이 퍼져나가야하는데 큐를 기준으로 돌려버리니까 1분마다 map이 바뀌는걸 구현하는게 어려웠음
+# 처음에는 물이 퍼져나가는걸 큐에서 값을 빼낼 때마다 시행하게 했는데
+# 그러면 1분마다 map이 바뀌는게 아니라 이동을 한 번 시도할 때마다 물이 퍼져나가게 되어버림
+# 그래서 큐에서 값을 꺼낼 때 시간도 함께 가져와서 이전 시간보다 값이 증가했으면 물이 퍼져나가게 했음
+# bfs는 계속해서 퍼져나가는 구조이기 때문에 값이 감소할 일은 없으므로 이렇게 하는게 가능하다
 
 
 from collections import deque
@@ -66,17 +70,16 @@ def dochi_move_bfs(tw_map, r_size, c_size, start_pos):
     visited = [[0]*c_size for _ in range(r_size)]
     visited[sx][sy] = 1
 
-    prev_move_cnt = -1
+    prev_time_cnt = -1
 
     while dochi_queue:
-        x, y, dochi_move_cnt = dochi_queue.popleft()
-        # print((x, y), "->", tw_map[x][y], dochi_move_cnt)
+        x, y, time_cnt = dochi_queue.popleft()
 
         # 다음에 물이 넘치는 지역 표시
-        if dochi_move_cnt > prev_move_cnt:
+        if time_cnt > prev_time_cnt:
             water_pos_li = get_pos(tw_map, r_size, c_size, "*")
             flood(tw_map, r_size, c_size, water_pos_li)
-            prev_move_cnt = dochi_move_cnt
+            prev_time_cnt = time_cnt
             # print("map:")
             # log(tw_map)
 
@@ -90,25 +93,24 @@ def dochi_move_bfs(tw_map, r_size, c_size, start_pos):
 
             # 비버의 소굴에 도착한 경우
             if tw_map[nx][ny] == "D":
-                # print("도오챠크")
-                return dochi_move_cnt + 1
+                return time_cnt + 1
 
             if tw_map[nx][ny] != ".":
                 continue
 
-            dochi_queue.append((nx, ny, dochi_move_cnt+1))
+            dochi_queue.append((nx, ny, time_cnt+1))
             visited[nx][ny] = 1
             # print("visited:")
             # log(visited)
 
-    return "KAKTUS"
+    return "KAKTUS"  # 비버 굴 못찾는 경우 칵퉤
 
 
 def main():
     R, C = map(int, input().split())
     tw_map = [list(input()) for _ in range(R)]
 
-    # 고슴도치, 물 처음 위치 찾기
+    # 고슴도치 처음 위치 찾기
     start_pos = get_pos(tw_map, R, C, "S")[0]  # S는 하나만 입력됨
 
     result = dochi_move_bfs(tw_map, R, C, start_pos)
