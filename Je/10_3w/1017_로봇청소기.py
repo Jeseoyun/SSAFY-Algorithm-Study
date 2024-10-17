@@ -31,24 +31,20 @@ def main():
     queue = deque([(r, c, d)])
     while queue:
         x, y, org_d, = queue.popleft()
-        print(x, y, org_d)
-        log(room)
+        # print(x, y, org_d)
+        # log(room)
         if room[x][y] == 0:  # 현재 방이 청소 되어있지 않음
             room[x][y] = 2  # 현재 방 청소
             cleaned += 1
 
         # 반시계방향으로 돌아가며 주변에 빈 칸이 있는지 검사
         empty_around = False
-        for i in range(1, 4):
-            tmp_d = (org_d - i) % 4
+        for i in range(4):
+            tmp_d = (org_d + 3 - i) % 4
             dx, dy = dxy[tmp_d]
             nx, ny = x + dx, y + dy
-            print("nx, ny", nx, ny)
 
             if nx < 0 or nx >= N or ny < 0 or ny >= M:
-                continue
-
-            if room[nx][ny] == 1:  # 벽인 경우
                 continue
 
             if room[nx][ny] == 0:  # 청소되지 않은 경우
@@ -58,14 +54,15 @@ def main():
 
         # 현재 칸 주변 4칸 중 청소되지 않은 빈 칸이 없음
         if not empty_around:
-            dx, dy = dxy[org_d]
-            nx, ny = x - dx, y - dy  # 원래 방향에서 후진
+            back_d = (org_d + 2) % 4
+            dx, dy = dxy[back_d]
+            bx, by = x + dx, y + dy  # 원래 방향에서 후진
 
             # 후진할 수 없는 경우 작동을 멈춤
-            if nx < 0 or nx >= N or ny < 0 or ny >= M or room[nx][ny] == 1:
+            if bx < 0 or bx >= N or by < 0 or by >= M or room[bx][by] == 1:
                 break
-
-            queue.append((nx, ny, org_d))
+            else:
+                queue.append((bx, by, org_d))
 
     print(cleaned)
 
