@@ -15,18 +15,27 @@
 # - **치킨집 폐업시키고 나면 각 집의 치킨 거리가 변한다**
 
 
-import copy
-from collections import defaultdict, deque
+from collections import deque
 
 dxy = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
-def nearest_chicken(city_map, map_size, sx, sy):
-    visited = copy.deepcopy(city_map)
-    visited[sx][sy] = -1  # 방문 체크: -1
+
+def log(arr):
+    for lst in arr:
+        for elem in lst:
+            print(elem, end=" ")
+        print()
+    print()
+
+
+def get_chicken_distance(map_size, sx, sy, survived_chicken):
+    visited = [[0]*map_size for _ in range(map_size)]
+    visited[sx][sy] = 1  # 방문 체크
 
     queue = deque([(sx, sy, 0)])
 
     while queue:
+        # log(visited)
         x, y, chicken_distance = queue.popleft()
 
         for dx, dy in dxy:
@@ -34,48 +43,60 @@ def nearest_chicken(city_map, map_size, sx, sy):
 
             if nx < 0 or nx >= map_size or ny < 0 or ny >= map_size:
                 continue
-            if visited[nx][ny] == -1:  # 이미 방문한 경우
+            if visited[nx][ny] == 1:  # 이미 방문한 경우
                 continue
 
-            if city_map[nx][ny] == 2:  # 치킨집 발견
-                return (nx, ny), chicken_distance + 1
+            if (nx, ny) in survived_chicken:  # 치킨집 발견
+                return chicken_distance + 1
 
             queue.append((nx, ny, chicken_distance + 1))
-            visited[nx][ny] = -1
+            visited[nx][ny] = 1
 
-    return (-1, -1), -1  # error
+
+def get_comb(arr, max_comb_size, idx, comb, combs):
+    if len(comb) > max_comb_size:
+        return
+
+    if idx == len(arr):
+        if not comb:
+            return
+
+        combs.append(comb)
+        return combs
+
+    get_comb(arr, max_comb_size, idx+1, comb+[arr[idx]], combs)  # 현재 값 포함
+    get_comb(arr, max_comb_size, idx+1, comb, combs)  # 현재 값 미포함
 
 
 def main():
     N, M = map(int, input().split())
     city_map = [list(map(int, input().split())) for _ in range(N)]
 
-    house = defaultdict(int)  # {집의 좌표: 치킨 거리}
-    chicken = defaultdict(list)  # {치킨 집의 좌표: 집의 좌표}
+    houses = []
+    chickens = []
 
-    # 집들의 치킨 거리 구하기
-    # 치킨 거리 = 맨해탄 거리 = bfs 이동 경로의 길이
     for i in range(N):
         for j in range(N):
             if city_map[i][j] == 1:
-                (cx, cy), cd = nearest_chicken(city_map, N, i, j)  # 치킨 집의 좌표, 치킨 거리
+                houses.append((i, j))
+            if city_map[i][j] == 2:
+                chickens.append((i, j))
 
-                house[(i, j)] = cd
-                chicken[(cx, cy)].append((i, j))
+    # 1. 치킨집 중에서 최대 M개를 고르기
+    # - 가능한 경우의 수를 모두 찾기 위해 조합 사용
+    chicken_combs = []
+    get_comb(chickens, M, 0, [], chicken_combs)
 
-    print(house, chicken)
+    # 2. 최소 치킨 거리 구하기
+    min_chicken_dist = float('inf')
+    for survived_chicken in chicken_combs:
+        total_dist = 0
+        for house in houses:
+            pos_x, pos_y = house
+            total_dist += get_chicken_distance(N, pos_x, pos_y, survived_chicken)
+        min_chicken_dist = min(min_chicken_dist, total_dist)
 
-    # 폐업 시키지 않을 치킨집 M개 선정
-    survived_chicken = [k for k, v in sorted(chicken.items(), key=lambda x: len(x[1]), reverse=True)[:M]]
-    print(survived_chicken)
-
-    # 도시의 치킨 거리 구하기
-    city_chicken_distance = 0
-    for chicken_pos in survived_chicken:
-        for house_pos in chicken[chicken_pos]:
-            city_chicken_distance += house[house_pos]
-
-    print(city_chicken_distance)
+    print(min_chicken_dist)
 
 
 if __name__ == "__main__":
