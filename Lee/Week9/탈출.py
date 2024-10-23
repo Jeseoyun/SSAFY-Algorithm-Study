@@ -34,7 +34,7 @@ def bfs_hedgehog():
                 # 방문 안했고 이동 가능한 곳('.' or 'D')이고 물 이 지금 시간에 안차있으면
                 if not visited[nx][ny] and (grid[nx][ny] == '.' or grid[nx][ny] == 'D' ) and (water_time[nx][ny] > time + 1):
                     visited[nx][ny] = True
-                    queue.append((nx, ny, time + 1))ㄴ
+                    queue.append((nx, ny, time + 1))
 
     return -1
 
