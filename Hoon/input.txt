@@ -1,21 +1,4 @@
-2
-11
-cozy
-lummox
-gives
-smart
-squid
-who
-asks
-for
-job
-pen
-abcdefghijklmnopqrstuvwxyz
-7
-abcdefghi
-jklmnopqr
-stuvwxyz
-zyxwvuts
-rqponmlkj
-ihgfedcba
-a
+3 3 0
+23 21 17
+44 18 29
+25 16 32

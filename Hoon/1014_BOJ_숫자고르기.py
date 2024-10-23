@@ -3,17 +3,19 @@ max_li = set()
 
 def dfs(graph, cur_node, dist):
     global max_li
+    # print("위치: ",cur_node)
 
     for next_node in graph[cur_node]:
         #왔던길 포함 사이클이면?
         if next_node in dist:
-            print(cur_node, next_node, dist)
+            # print(cur_node, next_node, dist)
             for i in dist:
                 max_li.add(i)
-        else:
-            dist.add(next_node)
-            dfs(graph, cur_node, dist)
-            dist.remove(next_node)
+            continue
+
+        dist.add(next_node)
+        dfs(graph, next_node, dist)
+        dist.remove(next_node)
     return
 
 
@@ -27,8 +29,6 @@ def main():
         node = int(input())
         graph[node].append(i+1)
 
-    print(graph)
-    
     for i in range(node_num):
         cur_node = i+1
         dist = set()
