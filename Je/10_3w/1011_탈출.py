@@ -103,7 +103,7 @@ def dochi_move_bfs(tw_map, r_size, c_size, start_pos):
             # print("visited:")
             # log(visited)
 
-    return "KAKTUS"  # 비버 굴 못찾는 경우 칵퉤
+    return "KAKTUS"
 
 
 def main():
