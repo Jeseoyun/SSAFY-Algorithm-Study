@@ -29,8 +29,8 @@ Case 2. 모든 가구에서 모든 치킨집을 바라본다.
 - 가구당 모든 치킨집 거리 저장할 배열
 
 
-
 폐업하지 않을 치킨집을 선택  -> DFS 종료조건
+
 '''
 
 M,N=map(int,input().split())
@@ -66,7 +66,7 @@ for i in range(len(lst)):
                 dist_lst[row].append(dist)
             row+=1
                 
-print(dist_lst)
+# print('집 to 치킨집 거리', dist_lst)
 
 ############ 여기까지 ok
 
@@ -74,19 +74,19 @@ print(dist_lst)
 # DFS
 def dfs(check,idx):
     global ans
-    
-    # 종료조건
+     
+    # 종료조건 1 / N만큼 가게 선택
     if len(check)==N:
         
         ### 완탐으로 어떤거 삭제할지 구현
         ### 제외한 컬럼 빼고 최단 거리구하는 코드 작성
         total_dist=0
 
-        for i in range(len(lst)):
+        for i in range(len(dist_lst)):
             dist=1e9
-            for j in range(len(lst[0])): 
+            for j in range(len(dist_lst[0])): 
                 if j in check:
-                    dist=min(dist,lst[i][j])
+                    dist=min(dist,dist_lst[i][j])
             
             total_dist+=dist
 
@@ -94,11 +94,11 @@ def dfs(check,idx):
         # print(total_dist)
 
         ans=min(ans,total_dist)
-        print(check)
+        # print(check)
         return
 
-
-    if idx==len(dist_lst):
+    # 종료조건 2 / 마지막 인덱스 
+    if idx==len(dist_lst[0]):
         return
 
     dfs(check,idx+1)
